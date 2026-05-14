@@ -9,8 +9,8 @@ connectDB()
 
 const app = express()
 
-// ─── CORS FIX ─────────────────────────────────────
-app.use(cors({
+// ─── CORS ─────────────────────────────────────────
+const corsOptions = {
   origin: [
     'http://localhost:5173',
     'https://ai-based-fraud-detection-system-ml.vercel.app',
@@ -19,10 +19,12 @@ app.use(cors({
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
-}))
+}
 
-// Handle preflight requests
-app.options('*', cors())
+app.use(cors(corsOptions))
+
+// ✅ Handle preflight - Express 5 compatible
+app.options('/{*path}', cors(corsOptions))
 
 app.use(helmet({
   crossOriginResourcePolicy: false

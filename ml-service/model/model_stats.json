@@ -1,0 +1,17 @@
+{
+  "accuracy": 99.89,
+  "precision": 63.57,
+  "recall": 83.67,
+  "f1_score": 72.25,
+  "roc_auc": 0.9763,
+  "optimal_threshold": 0.8641,
+  "total_training_samples": 454902,
+  "total_test_samples": 56962,
+  "fraud_cases_detected": 129,
+  "confusion_matrix": {
+    "true_negatives": 56817,
+    "false_positives": 47,
+    "false_negatives": 16,
+    "true_positives": 82
+  }
+}

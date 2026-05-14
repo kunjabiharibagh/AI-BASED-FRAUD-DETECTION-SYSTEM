@@ -5,24 +5,29 @@ const helmet = require('helmet')
 const rateLimit = require('express-rate-limit')
 const connectDB = require('./config/db')
 
-// Connect MongoDB
 connectDB()
 
 const app = express()
 
-// ─── Security Middleware ───────────────────────────
-app.use(helmet())
-
-// CORS
+// ─── CORS FIX ─────────────────────────────────────
 app.use(cors({
   origin: [
     'http://localhost:5173',
+    'https://ai-based-fraud-detection-system-ml.vercel.app',
     process.env.CLIENT_URL
   ],
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }))
 
-// Rate Limiting
+// Handle preflight requests
+app.options('*', cors())
+
+app.use(helmet({
+  crossOriginResourcePolicy: false
+}))
+
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
@@ -30,20 +35,16 @@ const limiter = rateLimit({
 })
 app.use(limiter)
 
-// Body Parser
 app.use(express.json())
 
-// ─── Health Check ─────────────────────────────────
 app.get('/', (req, res) => {
   res.json({ message: 'FraudGuard AI API running ✅' })
 })
 
-// ─── Routes ───────────────────────────────────────
 app.use('/api/auth', require('./routes/authRoutes'))
 app.use('/api/transactions', require('./routes/transactionRoutes'))
 app.use('/api/dashboard', require('./routes/dashboardRoutes'))
 
-// ─── Start Server ─────────────────────────────────
 const PORT = process.env.PORT || 5000
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`)
